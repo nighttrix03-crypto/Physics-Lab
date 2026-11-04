@@ -32,6 +32,13 @@
   section{padding:22px 0}
   h2{border-inline-start:5px solid var(--accent);padding-inline-start:10px;margin:0 0 14px}
   .note{background:var(--panel2);border:1px dashed var(--accent);border-radius:var(--radius);padding:12px 16px;color:var(--muted)}
+  .icon{width:16px;height:16px;vertical-align:-3px;fill:currentColor;flex:none}
+  .brand .icon{width:22px;height:22px;color:var(--accent)}
+  .search{display:flex;gap:8px;margin-bottom:14px}
+  .search input[type=search]{flex:1;background:var(--panel);border:1px solid var(--line);border-radius:999px;color:var(--text);padding:10px 18px;font-family:inherit;font-size:1rem}
+  .search input[type=search]:focus{outline:2px solid var(--accent);border-color:var(--accent)}
+  select{background:var(--panel);border:1px solid var(--line);border-radius:10px;color:var(--text);padding:8px 10px;font-family:inherit;width:100%}
+  .hidden-msg{color:var(--muted);border:1px dashed var(--line);border-radius:var(--radius);padding:14px;text-align:center}
   .filters{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px}
   button{cursor:pointer;border:1px solid var(--line);background:var(--panel);color:var(--text);border-radius:999px;padding:8px 16px;font-family:inherit;font-weight:700}
   button:hover{border-color:var(--accent)}
@@ -64,7 +71,7 @@
 <body>
 <header>
   <div class="wrap nav">
-    <div class="brand">🔬 مختبر <span>الفيزياء</span></div>
+    <div class="brand"><svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><circle cx="12" cy="12" r="1.8" fill="currentColor" stroke="none"/><ellipse cx="12" cy="12" rx="10" ry="4.2"/><ellipse cx="12" cy="12" rx="10" ry="4.2" transform="rotate(60 12 12)"/><ellipse cx="12" cy="12" rx="10" ry="4.2" transform="rotate(120 12 12)"/></svg> مختبر <span>الفيزياء</span></div>
     <nav>
       <a href="#sims">المحاكاة</a>
       <a href="#lessons">الدروس</a>
@@ -88,6 +95,9 @@
 
   <section id="sims">
     <h2>المحاكاة التفاعلية</h2>
+    <div class="search">
+      <input type="search" id="siteSearch" placeholder="ابحث عن محاكاة أو درس… مثال: بندول، أوم، سقوط" aria-label="بحث في المحاكيات والدروس">
+    </div>
     <div class="filters" role="group" aria-label="تصفية المحاكيات">
       <button class="active" data-filter="all">الكل</button>
       <button data-filter="mech">الميكانيك</button>
@@ -106,8 +116,8 @@
           <input type="range" id="pendG" min="1.6" max="9.8" step="0.1" value="9.8">
         </div>
         <div class="row">
-          <button class="primary" id="pendPlay">⏸ إيقاف</button>
-          <button id="pendReset">↺ إعادة</button>
+          <button class="primary" id="pendPlay"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 5h4v14H6zM14 5h4v14h-4z"/></svg> <span id="pendPlayLabel">إيقاف</span></button>
+          <button id="pendReset"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5V1L7 6l5 5V7c3.3 0 6 2.7 6 6s-2.7 6-6 6-6-2.7-6-6H4c0 4.4 3.6 8 8 8s8-3.6 8-8-3.6-8-8-8z"/></svg> إعادة</button>
         </div>
         <div class="readout">الدور النظري: <b id="pendPeriod">2.01 s</b> &nbsp;|&nbsp; كلما زاد الطول زاد الدور، وكلما زادت الجاذبية نقص.</div>
       </article>
@@ -123,8 +133,8 @@
           <input type="range" id="projA" min="15" max="80" step="1" value="45">
         </div>
         <div class="row">
-          <button class="primary" id="projFire">🚀 اقذف</button>
-          <button id="projReset">↺ إعادة</button>
+          <button class="primary" id="projFire"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M2 21l21-9L2 3v7l15 2-15 2v7z"/></svg> اقذف</button>
+          <button id="projReset"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5V1L7 6l5 5V7c3.3 0 6 2.7 6 6s-2.7 6-6 6-6-2.7-6-6H4c0 4.4 3.6 8 8 8s8-3.6 8-8-3.6-8-8-8z"/></svg> إعادة</button>
         </div>
         <div class="readout">المدى: <b id="projRange">63.7 m</b> &nbsp;|&nbsp; أقصى ارتفاع: <b id="projHeight">15.9 m</b></div>
       </article>
@@ -137,11 +147,15 @@
           <label>الارتفاع h <output id="fallHVal">45 m</output></label>
           <input type="range" id="fallH" min="5" max="100" step="5" value="45">
           <label>الكوكب (g) <output id="fallGVal">الأرض 9.8</output></label>
-          <input type="range" id="fallG" min="0" max="2" step="1" value="0">
+          <select id="fallG" aria-label="اختر الكوكب">
+            <option value="0" selected>الأرض — 9.8 m/s²</option>
+            <option value="1">القمر — 1.6 m/s²</option>
+            <option value="2">المريخ — 3.7 m/s²</option>
+          </select>
         </div>
         <div class="row">
-          <button class="primary" id="fallDrop">⬇ أسقط الكرة</button>
-          <button id="fallReset">↺ إعادة</button>
+          <button class="primary" id="fallDrop"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 12l-1.4-1.4L13 16.2V4h-2v12.2l-5.6-5.6L4 12l8 8 8-8z"/></svg> أسقط الكرة</button>
+          <button id="fallReset"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5V1L7 6l5 5V7c3.3 0 6 2.7 6 6s-2.7 6-6 6-6-2.7-6-6H4c0 4.4 3.6 8 8 8s8-3.6 8-8-3.6-8-8-8z"/></svg> إعادة</button>
         </div>
         <div class="readout">زمن الوصول: <b id="fallTime">3.03 s</b> &nbsp;|&nbsp; السرعة عند الاصطدام: <b id="fallSpeed">29.7 m/s</b></div>
       </article>
@@ -160,6 +174,7 @@
       </article>
 
     </div>
+    <p class="hidden-msg" id="noResults" hidden>لا توجد محاكاة مطابقة لبحثك. جرّب كلمة أخرى أو امسح البحث.</p>
   </section>
 
   <section id="lessons">
@@ -194,8 +209,8 @@
     <h2>اختبر نفسك</h2>
     <div id="quizBox"></div>
     <div class="row">
-      <button class="primary" id="checkQuiz">✔ صحّح الاختبار</button>
-      <button id="resetQuiz">↺ إعادة</button>
+      <button class="primary" id="checkQuiz"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 16.2L4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4z"/></svg> صحّح الاختبار</button>
+      <button id="resetQuiz"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5V1L7 6l5 5V7c3.3 0 6 2.7 6 6s-2.7 6-6 6-6-2.7-6-6H4c0 4.4 3.6 8 8 8s8-3.6 8-8-3.6-8-8-8z"/></svg> إعادة</button>
       <span id="score" aria-live="polite"></span>
     </div>
   </section>
@@ -209,17 +224,32 @@
 "use strict";
 const $ = id => document.getElementById(id);
 
-/* ---------- Filters ---------- */
+/* ---------- Search + Filters ---------- */
+let currentFilter = "all";
+function applyFilters(){
+  const q = $("siteSearch").value.trim();
+  let visible = 0;
+  document.querySelectorAll("#sims .card").forEach(card=>{
+    const okCat = (currentFilter==="all" || card.dataset.cat===currentFilter);
+    const okText = (!q || card.textContent.includes(q));
+    const show = okCat && okText;
+    card.style.display = show ? "" : "none";
+    if(show) visible++;
+  });
+  $("noResults").hidden = visible > 0;
+  document.querySelectorAll("#lessons details").forEach(lesson=>{
+    lesson.style.display = (!q || lesson.textContent.includes(q)) ? "" : "none";
+  });
+}
 document.querySelectorAll("[data-filter]").forEach(btn=>{
   btn.addEventListener("click",()=>{
     document.querySelectorAll("[data-filter]").forEach(b=>b.classList.remove("active"));
     btn.classList.add("active");
-    const f = btn.dataset.filter;
-    document.querySelectorAll("#sims .card").forEach(card=>{
-      card.style.display = (f==="all" || card.dataset.cat===f) ? "" : "none";
-    });
+    currentFilter = btn.dataset.filter;
+    applyFilters();
   });
 });
+$("siteSearch").addEventListener("input", applyFilters);
 
 function setupCanvas(id){
   const c = $(id), ctx = c.getContext("2d");
@@ -258,7 +288,7 @@ function pendDraw(ts){
   ctx.fillStyle="#0f172a"; ctx.beginPath(); ctx.arc(ox,oy,6,0,Math.PI*2); ctx.fill();
   requestAnimationFrame(pendDraw);
 }
-$("pendPlay").addEventListener("click",e=>{ pRunning=!pRunning; e.target.textContent = pRunning?"⏸ إيقاف":"▶ تشغيل"; });
+$("pendPlay").addEventListener("click",()=>{ pRunning=!pRunning; $("pendPlayLabel").textContent = pRunning?"إيقاف":"تشغيل"; });
 $("pendReset").addEventListener("click",()=>{ pTheta=0.6; pOmega=0; });
 ["pendL","pendG"].forEach(id=>$(id).addEventListener("input",pendParams));
 pendParams(); requestAnimationFrame(pendDraw);
@@ -275,10 +305,18 @@ function projParams(){
   $("projHeight").textContent = (Math.pow(v*Math.sin(rad),2)/(2*g)).toFixed(1)+" m";
   return {v, rad, g};
 }
+function projScale(v, rad, g){
+  const range = v*v*Math.sin(2*rad)/g;
+  const maxH = Math.pow(v*Math.sin(rad),2)/(2*g);
+  const sx = range>0 ? (proj.W-70-20)/range : 7;
+  const sy = maxH>0 ? (proj.H-40-30)/maxH : 7;
+  return Math.min(sx, sy);
+}
 function projDraw(ts){
   const {v, rad, g} = projParams();
   clear(proj);
   const ctx = proj.ctx, ox = 50, oy = proj.H-40;
+  const scale = projScale(v, rad, g);
   ctx.strokeStyle="#334155"; ctx.lineWidth=2;
   ctx.beginPath(); ctx.moveTo(0,oy); ctx.lineTo(proj.W,oy); ctx.stroke();
   ctx.fillStyle="#38bdf8";
@@ -287,7 +325,7 @@ function projDraw(ts){
     projT += 0.035;
     const x = v*Math.cos(rad)*projT;
     const y = v*Math.sin(rad)*projT - 0.5*g*projT*projT;
-    const sx = ox + x*7, sy = oy - Math.max(y,0)*7;
+    const sx = ox + x*scale, sy = oy - Math.max(y,0)*scale;
     if(y >= 0){ projTrail.push([sx,sy]); } else { projT = null; }
     if(projTrail.length){
       ctx.strokeStyle="#facc15"; ctx.lineWidth=2; ctx.beginPath();
@@ -343,7 +381,11 @@ function fallDraw(){
 }
 $("fallDrop").addEventListener("click",()=>{ fT=0; fDone=false; });
 $("fallReset").addEventListener("click",()=>{ fT=null; fDone=false; });
-["fallH","fallG"].forEach(id=>$(id).addEventListener("input",()=>{ fallParams(); fT=null; fDone=false; }));
+["fallH","fallG"].forEach(id=>{
+  const reset=()=>{ fallParams(); fT=null; fDone=false; };
+  $(id).addEventListener("input",reset);
+  $(id).addEventListener("change",reset);
+});
 fallParams(); requestAnimationFrame(fallDraw);
 
 /* ---------- Ohm's law ---------- */
@@ -390,6 +432,15 @@ function ohmDraw(){
   pts.forEach(p=>{ ctx.beginPath(); ctx.arc(p[0],p[1],4,0,Math.PI*2); ctx.fill(); });
   requestAnimationFrame(ohmDraw);
 }
+function ohmReadout(){
+  const V = parseFloat($("ohmV").value), R = parseFloat($("ohmR").value);
+  const I = R>0 ? V/R : 0;
+  $("ohmVVal").textContent = V+" V";
+  $("ohmRVal").textContent = R+" Ω";
+  $("ohmI").textContent = I.toFixed(2)+" A";
+  $("ohmP").textContent = (V*I).toFixed(1)+" W";
+}
+["ohmV","ohmR"].forEach(id=>$(id).addEventListener("input",ohmReadout));
 requestAnimationFrame(ohmDraw);
 
 /* ---------- Quiz ---------- */
@@ -417,8 +468,8 @@ $("checkQuiz").addEventListener("click",()=>{
   questions.forEach((item,i)=>{
     const sel = document.querySelector(`input[name="q${i}"]:checked`);
     const fb = $("fb"+i);
-    if(sel && parseInt(sel.value,10)===item.a){ score++; fb.innerHTML='<span class="correct">✔ إجابة صحيحة</span>'; }
-    else{ fb.innerHTML=`<span class="wrong">✘ الإجابة الصحيحة: ${item.o[item.a]}</span>`; }
+    if(sel && parseInt(sel.value,10)===item.a){ score++; fb.innerHTML='<span class="correct">إجابة صحيحة</span>'; }
+    else{ fb.innerHTML=`<span class="wrong">إجابة خاطئة — الإجابة الصحيحة: ${item.o[item.a]}</span>`; }
   });
   $("score").textContent = `نتيجتك: ${score} / ${questions.length}`;
 });
