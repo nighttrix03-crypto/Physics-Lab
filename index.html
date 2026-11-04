@@ -85,12 +85,12 @@
     <h1>مختبر <span>الفيزياء</span> التفاعلي</h1>
     <p>استكشف الظواهر الفيزيائية بنفسك: غيّر القيم، شغّل المحاكاة، لاحظ النتيجة، ثم اختبر فهمك. محتوى بالعربية موافق للمنهاج الجزائري.</p>
     <div class="stats">
-      <div class="stat"><b>4</b>محاكاة تفاعلية عاملة الآن</div>
+      <div class="stat"><b>72</b>محاكاة تفاعلية عاملة</div>
       <div class="stat"><b>4</b>دروس ملخّصة</div>
       <div class="stat"><b>8</b>أسئلة اختبار الآن</div>
       <div class="stat"><b>72 / 288</b>الهدف: محاكاة / سؤالًا</div>
     </div>
-    <p class="note">هذه النسخة الأولى المنشورة في المستودع. تُضاف بقية المحاكيات والدروس والأسئلة تدريجيًا حتى بلوغ الهدف الكامل.</p>
+    <p class="note">اكتملت المحاكيات: 72 محاكاة تفاعلية عاملة بالحركة والتحكم. الدروس والأسئلة تُستكمل تدريجيًا نحو هدف 72 درسًا و288 سؤالًا.</p>
   </div>
 
   <section id="sims">
@@ -101,7 +101,11 @@
     <div class="filters" role="group" aria-label="تصفية المحاكيات">
       <button class="active" data-filter="all">الكل</button>
       <button data-filter="mech">الميكانيك</button>
-      <button data-filter="elec">الكهرباء</button>
+      <button data-filter="energy">الطاقة والشغل</button>
+      <button data-filter="elec">الكهرباء والمغناطيسية</button>
+      <button data-filter="optics">البصريات</button>
+      <button data-filter="waves">الموجات والاهتزازات</button>
+      <button data-filter="modern">الحديثة والفلك</button>
     </div>
     <div class="grid">
 
@@ -174,6 +178,7 @@
       </article>
 
     </div>
+    <div class="grid" id="extraGrid"></div>
     <p class="hidden-msg" id="noResults" hidden>لا توجد محاكاة مطابقة لبحثك. جرّب كلمة أخرى أو امسح البحث.</p>
   </section>
 
@@ -442,6 +447,441 @@ function ohmReadout(){
 }
 ["ohmV","ohmR"].forEach(id=>$(id).addEventListener("input",ohmReadout));
 requestAnimationFrame(ohmDraw);
+
+
+/* ================= 68 Additional Simulations (total: 72) ================= */
+const CATALOG=[
+{n:"الحركة المستقيمة المنتظمة",c:"mech",e:"move",m:"const",a:["السرعة v",1,20,8,"m/s"],b:["الزمن t",1,20,5,"s"],f:(a,b)=>`المسافة المقطوعة: ${(a*b).toFixed(1)} m — حركة بسرعة ثابتة على خط مستقيم.`},
+{n:"الحركة المستقيمة المتسارعة بانتظام",c:"mech",e:"move",m:"accel",a:["التسارع a",0.5,10,2,"m/s²"],b:["الزمن t",1,10,4,"s"],f:(a,b)=>`السرعة بعد ${b}s: ${(a*b).toFixed(1)} m/s | المسافة: ${(0.5*a*b*b).toFixed(1)} m (من السكون).`},
+{n:"الحركة الدائرية المنتظمة",c:"mech",e:"circular",a:["نصف القطر r",1,10,4,"m"],b:["السرعة الخطية v",1,20,8,"m/s"],f:(a,b)=>`السرعة الزاوية ω=${(b/a).toFixed(2)} rad/s | التسارع المركزي: ${(b*b/a).toFixed(1)} m/s² | الدور: ${(2*Math.PI*a/b).toFixed(2)} s`},
+{n:"قانون نيوتن الثاني",c:"mech",e:"move",m:"accel",d:1,a:["القوة F",1,100,20,"N"],b:["الكتلة m",1,20,5,"kg"],f:(a,b)=>`التسارع a = F/m = ${(a/b).toFixed(2)} m/s² — كلما زادت الكتلة نقص التسارع لنفس القوة.`},
+{n:"المستوى المائل والقوة العمودية",c:"mech",e:"incline",a:["زاوية الميل θ",5,60,30,"°"],b:["الكتلة m",1,20,5,"kg"],f:(a,b)=>{const r=a*Math.PI/180,g=9.8;return `مركبة الثقل على المنحدر: ${(b*g*Math.sin(r)).toFixed(1)} N | القوة العمودية (عمودية على السطح): ${(b*g*Math.cos(r)).toFixed(1)} N`;}},
+{n:"الاحتكاك وكبح متحرك",c:"mech",e:"move",m:"decel",a:["السرعة الابتدائية v₀",5,40,20,"m/s"],b:["معامل الاحتكاك μ",0.05,0.8,0.3,""],f:(a,b)=>`مسافة الكبح: ${(a*a/(2*b*9.8)).toFixed(1)} m | زمن التوقف: ${(a/(b*9.8)).toFixed(1)} s`},
+{n:"قانون هوك — النابض",c:"mech",e:"spring",m:"static",a:["ثابت النابض k",10,200,80,"N/m"],b:["القوة المطبقة F",1,50,20,"N"],f:(a,b)=>`الاستطالة x = F/k = ${(b/a).toFixed(3)} m`},
+{n:"اهتزاز كتلة — نابض",c:"waves",e:"spring",m:"osc",a:["ثابت النابض k",10,200,80,"N/m"],b:["الكتلة m",0.5,10,2,"kg"],f:(a,b)=>`الدور T = 2π√(m/k) = ${(2*Math.PI*Math.sqrt(b/a)).toFixed(2)} s | التردد: ${(1/(2*Math.PI*Math.sqrt(b/a))).toFixed(2)} Hz`},
+{n:"كمية الحركة",c:"mech",e:"collision",m:"momentum",a:["الكتلة m",1,10,3,"kg"],b:["السرعة v",1,15,6,"m/s"],f:(a,b)=>`كمية الحركة p = m·v = ${(a*b).toFixed(1)} kg·m/s | الطاقة الحركية: ${(0.5*a*b*b).toFixed(1)} J`},
+{n:"التصادم المرن",c:"mech",e:"collision",m:"elastic",a:["الكتلة m₁",1,10,3,"kg"],b:["الكتلة m₂",1,10,3,"kg"],f:(a,b)=>{const u=6,v1=(a-b)/(a+b)*u,v2=2*a/(a+b)*u;return `بسرعة ابتدائية 6 m/s للجسم الأول: سرعته بعد التصادم ${v1.toFixed(2)} m/s، والثاني ${v2.toFixed(2)} m/s — الطاقة وكمية الحركة محفوظتان.`;}},
+{n:"التصادم غير المرن",c:"mech",e:"collision",m:"stick",a:["الكتلة m₁",1,10,3,"kg"],b:["الكتلة m₂",1,10,3,"kg"],f:(a,b)=>{const v=a*6/(a+b);return `يلتحم الجسمان بسرعة مشتركة: ${v.toFixed(2)} m/s — كمية الحركة محفوظة والطاقة الحركية تنقص.`;}},
+{n:"عزم القوة والرافعة",c:"mech",e:"lever",a:["القوة F₁ (ذراع 0.4m)",1,50,20,"N"],b:["القوة F₂ (ذراع 0.6m)",1,50,20,"N"],f:(a,b)=>`العزم الأيسر: ${(a*0.4).toFixed(1)} N·m | الأيمن: ${(b*0.6).toFixed(1)} N·m — التوازن عندما يتساوى العزمان.`},
+{n:"السقوط بمقاومة الهواء",c:"mech",e:"fallDrag",a:["الكتلة m",1,20,5,"kg"],b:["مساحة المظلة",0,10,4,"m²"],f:(a,b)=>`السرعة الحدية التقريبية: ${Math.sqrt(20*a/(1+b)).toFixed(1)} m/s — تكبر المظلة فتنقص السرعة الحدية.`},
+{n:"الوزن على الكواكب",c:"mech",e:"planet",a:["الكتلة m",1,100,50,"kg"],b:["الجاذبية g",1.6,24.8,9.8,"m/s²"],f:(a,b)=>`الوزن P = m·g = ${(a*b).toFixed(0)} N — الكتلة ثابتة والوزن يتغير من كوكب لآخر.`},
+{n:"عمل قوة ثابتة",c:"energy",e:"move",m:"const",a:["القوة F",1,100,30,"N"],b:["المسافة d",1,20,6,"m"],f:(a,b)=>`العمل W = F·d = ${(a*b).toFixed(0)} J (قوة في اتجاه الحركة).`},
+{n:"الطاقة الحركية",c:"energy",e:"energy",a:["الكتلة m",1,20,4,"kg"],b:["السرعة v",1,30,10,"m/s"],f:(a,b)=>`الطاقة الحركية Ec = ½·m·v² = ${(0.5*a*b*b).toFixed(0)} J`},
+{n:"الطاقة الكامنة الثقالية",c:"energy",e:"energy",a:["الكتلة m",1,20,4,"kg"],b:["الارتفاع h",1,30,10,"m"],f:(a,b)=>`الطاقة الكامنة Ep = m·g·h = ${(a*9.8*b).toFixed(0)} J`},
+{n:"انحفاظ الطاقة الميكانيكية",c:"energy",e:"energy",m:"conv",a:["الارتفاع الابتدائي h",1,30,10,"m"],b:["الكتلة m",1,20,4,"kg"],f:(a,b)=>`الطاقة الميكانيكية Em = ${(b*9.8*a).toFixed(0)} J ثابتة | سرعة الوصول للأرض: ${Math.sqrt(2*9.8*a).toFixed(1)} m/s (دون احتكاك).`},
+{n:"القدرة الميكانيكية",c:"energy",e:"move",m:"const",a:["العمل W",100,5000,1200,"J"],b:["الزمن t",1,20,4,"s"],f:(a,b)=>`القدرة P = W/t = ${(a/b).toFixed(0)} W`},
+{n:"الطاقة الكامنة المرنة",c:"energy",e:"spring",m:"static",a:["ثابت النابض k",10,200,80,"N/m"],b:["الاستطالة x",0.05,0.5,0.2,"m"],f:(a,b)=>`الطاقة المرنة = ½·k·x² = ${(0.5*a*b*b).toFixed(2)} J`},
+{n:"الطاقة الحرارية من الاحتكاك",c:"energy",e:"move",m:"decel",a:["قوة الاحتكاك f",1,50,15,"N"],b:["مسافة الانزلاق d",1,20,8,"m"],f:(a,b)=>`الطاقة المتحولة لحرارة Q = f·d = ${(a*b).toFixed(0)} J`},
+{n:"تحويلات الطاقة في البندول",c:"energy",e:"energy",m:"conv",a:["أقصى ارتفاع h",0.1,2,0.5,"m"],b:["الكتلة m",0.1,5,1,"kg"],f:(a,b)=>`Em = ${(b*9.8*a).toFixed(2)} J | أقصى سرعة أسفل المسار: ${Math.sqrt(2*9.8*a).toFixed(2)} m/s — تبادل مستمر بين كامنة وحركية.`},
+{n:"شدة التيار الكهربائي",c:"elec",e:"circuit",a:["الشحنة Q",1,100,30,"C"],b:["الزمن t",1,60,10,"s"],f:(a,b)=>`شدة التيار I = Q/t = ${(a/b).toFixed(2)} A — سرعة الإلكترونات في الرسم تتبع I.`},
+{n:"مقاومة موصل",c:"elec",e:"circuit",a:["طول السلك L",1,20,8,"m"],b:["مقطع السلك S",1,10,2,"mm²"],f:(a,b)=>`للنحاس (ρ=0.017 Ω·mm²/m): المقاومة R = ρL/S = ${(0.017*a/b).toFixed(3)} Ω`},
+{n:"مقاومات على التسلسل",c:"elec",e:"circuit",m:"series",a:["المقاومة R₁",1,100,20,"Ω"],b:["المقاومة R₂",1,100,30,"Ω"],f:(a,b)=>`المقاومة المكافئة: ${(a+b).toFixed(0)} Ω | التيار عند 12V: ${(12/(a+b)).toFixed(2)} A — نفس التيار في الكل.`},
+{n:"مقاومات على التفرع",c:"elec",e:"circuit",m:"parallel",a:["المقاومة R₁",1,100,20,"Ω"],b:["المقاومة R₂",1,100,30,"Ω"],f:(a,b)=>`المقاومة المكافئة: ${(a*b/(a+b)).toFixed(1)} Ω | التيار الكلي عند 12V: ${(12/(a*b/(a+b))).toFixed(2)} A — نفس التوتر على الكل.`},
+{n:"القدرة ومفعول جول",c:"elec",e:"circuit",a:["التوتر V",1,48,12,"V"],b:["المقاومة R",2,100,24,"Ω"],f:(a,b)=>`القدرة P = V²/R = ${(a*a/b).toFixed(1)} W | الحرارة في دقيقة: ${(a*a/b*60).toFixed(0)} J`},
+{n:"الطاقة الكهربائية المستهلكة",c:"elec",e:"circuit",a:["قدرة الجهاز",0.1,3,1,"kW"],b:["مدة التشغيل",1,24,5,"h"],f:(a,b)=>`الطاقة المستهلكة E = P·t = ${(a*b).toFixed(2)} kWh`},
+{n:"الحقل المغناطيسي لقضيب مغناطيسي",c:"elec",e:"field",m:"magnet",a:["شدة المغناطيس (نسبية)",1,10,5,""],b:["بعد البوصلة",1,20,8,"cm"],f:(a,b)=>`شدة الحقل النسبية عند البوصلة ≈ ${(a/(b*b)*100).toFixed(1)} — تنقص بسرعة مع البعد، وخطوط الحقل من الشمال للجنوب خارج المغناطيس.`},
+{n:"الحقل المغناطيسي لسلك مستقيم",c:"elec",e:"field",m:"wire",a:["شدة التيار I",1,20,5,"A"],b:["البعد عن السلك r",1,20,5,"cm"],f:(a,b)=>`شدة الحقل B = μ₀I/(2πr) = ${(2e-7*a/(b/100)).toExponential(1)} T — خطوطه دوائر حول السلك.`},
+{n:"قوة لابلاص الكهرومغناطيسية",c:"elec",e:"field",m:"laplace",a:["الحقل المغناطيسي B",0.1,2,0.5,"T"],b:["شدة التيار I",1,20,8,"A"],f:(a,b)=>`لسلك طوله 0.5m عمودي على الحقل: F = B·I·L = ${(a*b*0.5).toFixed(2)} N`},
+{n:"المكثفة — دارة RC",c:"elec",e:"curve",m:"charge",a:["المقاومة R",1,100,10,"kΩ"],b:["السعة C",10,1000,100,"µF"],f:(a,b)=>`ثابت الزمن τ = R·C = ${(a*b).toFixed(0)} ms — بعده تبلغ المكثفة ~63% من شحنها.`},
+{n:"الوشيعة — دارة RL",c:"elec",e:"curve",m:"growth",a:["التحريض L",0.1,2,0.5,"H"],b:["المقاومة R",1,100,20,"Ω"],f:(a,b)=>`ثابت الزمن τ = L/R = ${(a/b).toFixed(3)} s — التيار يتنامى تدريجيًا ولا يقفز فجأة.`},
+{n:"التيار المتناوب الجيبي",c:"elec",e:"wave",m:"ac",a:["التوتر الأعظمي Um",10,325,220,"V"],b:["التردد f",10,100,50,"Hz"],f:(a,b)=>`التوتر الفعال U = Um/√2 = ${(a/Math.SQRT2).toFixed(0)} V | الدور T = ${(1/b).toFixed(3)} s`},
+{n:"انعكاس الضوء — مرآة مستوية",c:"optics",e:"reflect",a:["زاوية الورود",0,80,35,"°"],b:["ميل المرآة",0,30,0,"°"],f:(a,b)=>`زاوية الانعكاس تساوي زاوية الورود (${a}°). إمالة المرآة بـ${b}° تدير الشعاع المنعكس بـ${2*b}°.`},
+{n:"انكسار الضوء",c:"optics",e:"refract",a:["زاوية الورود",0,80,40,"°"],b:["قرينة الوسط الثاني n₂",1,2.4,1.33,""],f:(a,b)=>{const r=Math.asin(Math.sin(a*Math.PI/180)/b)*180/Math.PI;return `زاوية الانكسار: ${r.toFixed(1)}° — يقترب الشعاع من الناظم عند الانتقال لوسط أكثر كثافة ضوئيًا.`;}},
+{n:"العدسة المجمعة",c:"optics",e:"lens",m:"conv",a:["البعد المحرقي f",5,30,10,"cm"],b:["بعد الجسم",10,80,30,"cm"],f:(a,b)=>{const di=1/(1/a-1/b),m=-di/b;return !isFinite(di)?`الجسم في المحرق: الصورة في اللانهاية.`:di>0?`بعد الصورة: ${di.toFixed(1)} cm | التكبير: ${Math.abs(m).toFixed(2)}× — صورة حقيقية مقلوبة.`:`الجسم داخل المحرق: صورة وهمية مكبرة على نفس جهة الجسم.`;}},
+{n:"العدسة المفرقة",c:"optics",e:"lens",m:"div",a:["البعد المحرقي |f|",5,30,10,"cm"],b:["بعد الجسم",10,80,30,"cm"],f:(a,b)=>{const di=1/(-1/a-1/b);return `بعد الصورة الوهمية: ${Math.abs(di).toFixed(1)} cm قبل العدسة | التكبير: ${Math.abs(di/b).toFixed(2)}× — دائمًا وهمية مصغرة معتدلة.`;}},
+{n:"المرآة المقعرة",c:"optics",e:"lens",m:"mirrorC",a:["البعد المحرقي f",5,30,10,"cm"],b:["بعد الجسم",10,80,30,"cm"],f:(a,b)=>{const di=1/(1/a-1/b);return !isFinite(di)?`الجسم في المحرق: الصورة في اللانهاية.` :di>0?`بعد الصورة الحقيقية أمام المرآة: ${di.toFixed(1)} cm | التكبير: ${Math.abs(di/b).toFixed(2)}×`:`الجسم داخل المحرق: صورة وهمية مكبرة خلف المرآة.`;}},
+{n:"المرآة المحدبة",c:"optics",e:"lens",m:"mirrorV",a:["البعد المحرقي |f|",5,30,10,"cm"],b:["بعد الجسم",10,80,30,"cm"],f:(a,b)=>{const di=1/(-1/a-1/b);return `صورة وهمية خلف المرآة على بعد ${Math.abs(di).toFixed(1)} cm، مصغرة ${Math.abs(di/b).toFixed(2)}× — مجال رؤية واسع.`;}},
+{n:"المنشور وانحراف الضوء",c:"optics",e:"prism",a:["زاوية المنشور A",30,70,60,"°"],b:["زاوية الورود",30,70,45,"°"],f:(a,b)=>{const n=1.5,D=2*Math.asin(n*Math.sin(a/2*Math.PI/180))*180/Math.PI-a;return `أدنى انحراف (زجاج n=1.5): ${D.toFixed(1)}° — يكبر الانحراف مع زاوية المنشور. حرّك زاوية الورود ولاحظ مسار الشعاع.`;}},
+{n:"الانعكاس الكلي الداخلي",c:"optics",e:"refract",m:"total",a:["زاوية الورود",0,80,50,"°"],b:["قرينة الوسط n₁",1.33,2.4,1.5,""],f:(a,b)=>{const c=Math.asin(1/b)*180/Math.PI;return `الزاوية الحدية: ${c.toFixed(1)}° — ${a>c?"الورود أكبر من الحدية: انعكاس كلي، لا انكسار.":"الورود أصغر من الحدية: يوجد شعاع منكسر."}`;}},
+{n:"حيود الضوء عبر شق",c:"optics",e:"wave",m:"diff",a:["الطول الموجي λ",380,700,550,"nm"],b:["عرض الشق",0.01,0.1,0.05,"mm"],f:(a,b)=>{const s=(a*1e-6)/b;return `اتساع البقعة المركزية: sinθ = λ/d ≈ ${s.toFixed(3)} — كلما ضاق الشق اتسع الحيود.`;}},
+{n:"تشتت الضوء بالمنشور",c:"optics",e:"prism",m:"spectrum",a:["زاوية المنشور A",30,70,60,"°"],b:["قرينة الزجاج n",1.5,1.7,1.52,""],f:(a,b)=>`يحلل المنشور الضوء الأبيض لطيف: الأحمر ينحرف أقل والبنفسجي أكثر، وتشتد الظاهرة مع زاوية المنشور.`},
+{n:"العدسة المكبرة",c:"optics",e:"lens",m:"conv",a:["البعد المحرقي f",2,20,5,"cm"],b:["بعد الجسم",2,20,4,"cm"],f:(a,b)=>`التكبير الزاوي التقريبي G ≈ 25/f = ${(25/a).toFixed(1)}× — يُوضع الجسم داخل البعد المحرقي.`},
+{n:"صورة آلة التصوير",c:"optics",e:"lens",m:"conv",a:["البعد المحرقي f",5,30,10,"cm"],b:["بعد الجسم",30,200,100,"cm"],f:(a,b)=>{const di=1/(1/a-1/b);return !isFinite(di)?`الجسم في المحرق: الصورة في اللانهاية.`:`تتشكل الصورة الحقيقية المقلوبة على المستقبل على بعد ${di.toFixed(1)} cm من العدسة.`;}},
+{n:"الموجة المستعرضة",c:"waves",e:"wave",a:["السعة A",1,10,5,"cm"],b:["التردد f",1,20,5,"Hz"],f:(a,b)=>`الدور T = 1/f = ${(1/b).toFixed(2)} s — اهتزاز الجسيمات عمودي على اتجاه الانتشار.`},
+{n:"الموجة الطولية — الصوت",c:"waves",e:"longitudinal",a:["السعة A",1,10,5,""],b:["التردد f",1,20,5,"Hz"],f:(a,b)=>`مناطق انضغاط وتخلخل تتناوب، واهتزاز الجسيمات على اتجاه الانتشار نفسه. الدور: ${(1/b).toFixed(2)} s`},
+{n:"الموجات الواقفة على وتر",c:"waves",e:"wave",m:"stand",a:["رقم التوافقية n",1,6,2,""],b:["طول الوتر L",0.5,2,1,"m"],f:(a,b)=>`الطول الموجي λ = 2L/n = ${(2*b/a).toFixed(2)} m | عدد العقد: ${a+1} وعدد البطون: ${a}`},
+{n:"تداخل موجتين",c:"waves",e:"wave",m:"super",a:["فرق الطور",0,360,0,"°"],b:["سعة كل موجة A",1,10,5,"cm"],f:(a,b)=>{const res=2*b*Math.cos(a/2*Math.PI/180);return `سعة المحصلة: ${Math.abs(res).toFixed(1)} cm — تداخل بناء عند 0° وهادم عند 180°.`;}},
+{n:"تأثير دوبلر",c:"waves",e:"doppler",a:["سرعة المصدر",0,120,40,"m/s"],b:["تردد المصدر f",100,1000,440,"Hz"],f:(a,b)=>{const c=340;return `أمام المصدر: ${Math.round(b*c/(c-a))} Hz (أعلى) | خلفه: ${Math.round(b*c/(c+a))} Hz (أدنى) — سرعة المصدر هنا دائمًا دون سرعة الصوت.`;}},
+{n:"صدى الصوت",c:"waves",e:"wave",m:"echo",a:["بعد الجدار d",10,500,170,"m"],b:["سرعة الصوت v",300,360,340,"m/s"],f:(a,b)=>`يعود الصدى بعد t = 2d/v = ${(2*a/b).toFixed(2)} s`},
+{n:"الرنين الاهتزازي",c:"waves",e:"curve",m:"resonance",a:["نسبة التردد القسري",0.2,2,1,"×f₀"],b:["التخميد",0.05,1,0.2,""],f:(a,b)=>{const amp=1/Math.sqrt(Math.pow(1-a*a,2)+Math.pow(2*b*a,2));return `السعة النسبية: ${amp.toFixed(2)} — أعظمية قرب التطابق مع التردد الذاتي، ويخففها التخميد.`;}},
+{n:"حيود الموجات على فتحة",c:"waves",e:"wave",m:"diff",a:["الطول الموجي λ",20,100,50,""],b:["عرض الفتحة",10,100,40,""],f:(a,b)=>`كلما قارب الطول الموجي عرض الفتحة ظهر الحيود أوضح وانحنت الموجة خلف الحاجز.`},
+{n:"سرعة موجة على حبل مشدود",c:"waves",e:"wave",a:["قوة الشد F",10,200,80,"N"],b:["الكتلة الخطية μ",0.01,0.5,0.05,"kg/m"],f:(a,b)=>`سرعة الانتشار v = √(F/μ) = ${Math.sqrt(a/b).toFixed(1)} m/s`},
+{n:"شدة الصوت والبعد",c:"waves",e:"longitudinal",a:["قدرة المصدر P",1,100,20,"W"],b:["البعد r",1,50,10,"m"],f:(a,b)=>{const I=a/(4*Math.PI*b*b);return `الشدة I = P/(4πr²) = ${I.toExponential(2)} W/m² — تنقص مع مربع البعد.`;}},
+{n:"اهتزاز شوكة رنانة",c:"waves",e:"wave",a:["السعة A",1,10,4,""],b:["التردد f",50,1000,440,"Hz"],f:(a,b)=>`تردد الشوكة: ${b} Hz | دورها: ${(1000/b).toFixed(2)} ms — نغمة نقية شبه جيبية.`},
+{n:"انكسار الموجات وتغير الطول الموجي",c:"waves",e:"wave",a:["السرعة في الوسط 1",10,340,200,"m/s"],b:["السرعة في الوسط 2",10,340,120,"m/s"],f:(a,b)=>`التردد ثابت عند تغير الوسط، والطول الموجي يتناسب مع السرعة: λ₂/λ₁ = ${(b/a).toFixed(2)}`},
+{n:"الانحلال الإشعاعي وعمر النصف",c:"modern",e:"curve",m:"decay",a:["عمر النصف",1,20,5,"سنة"],b:["العدد الابتدائي N₀",100,10000,1000,""],f:(a,b)=>`بعد 3 أعمار نصف يتبقى N₀/8 = ${Math.round(b/8)} نواة — الانحلال أسي ولا يتأثر بالحرارة أو الضغط.`},
+{n:"النشاط الإشعاعي",c:"modern",e:"curve",m:"decay",a:["ثابت الانحلال λ",0.01,1,0.1,"/s"],b:["عدد الأنوية N",100,10000,1000,""],f:(a,b)=>`النشاط A = λ·N = ${(a*b).toFixed(0)} Bq`},
+{n:"طاقة تكافؤ الكتلة E=mc²",c:"modern",e:"energy",a:["نقص الكتلة",0.1,10,1,"mg"],b:["الكتلة الابتدائية",1,100,10,"g"],f:(a,b)=>`الطاقة المحررة من ${a} mg: E = Δm·c² = ${(a*1e-6*9e16).toExponential(1)} J — مقدار هائل من كتلة ضئيلة.`},
+{n:"التأثير الكهروضوئي",c:"modern",e:"photo",a:["تردد الضوء (×10¹⁴)",1,20,8,"Hz"],b:["شغل الاستخراج",1,6,2.3,"eV"],f:(a,b)=>{const E=0.4136*a;return E>b?`طاقة الفوتون ${E.toFixed(2)} eV أكبر من شغل الاستخراج: إلكترونات بطاقة حركية أعظمية ${(E-b).toFixed(2)} eV`:`طاقة الفوتون ${E.toFixed(2)} eV دون شغل الاستخراج: لا انبعاث مهما زادت شدة الضوء — حالة ساكنة صحيحة.`;}},
+{n:"قانون كبلر الثالث والمدارات",c:"modern",e:"orbit",a:["نصف المحور (AU)",0.5,10,1,"AU"],b:["اللامركزية",0,0.8,0.2,""],f:(a,b)=>`دور الكوكب T = a^(3/2) = ${Math.pow(a,1.5).toFixed(2)} سنة — للأرض (1 AU) دورها سنة واحدة.`},
+{n:"سرعة قمر صناعي مداري",c:"modern",e:"orbit",m:"sat",a:["الارتفاع عن الأرض",200,36000,400,"km"],b:["كتلة القمر",100,5000,1000,"kg"],f:(a,b)=>{const r=(6371+a)*1000,v=Math.sqrt(6.674e-11*5.97e24/r)/1000,T=2*Math.PI*r/(v*1000)/60;return `السرعة المدارية: ${v.toFixed(2)} km/s | الدور: ${T.toFixed(0)} دقيقة — لا تتعلق السرعة بكتلة القمر (${b} kg).`;}},
+{n:"الجاذبية العامة لنيوتن",c:"modern",e:"gravity",a:["كتلة الجسم الأول (×10²⁴)",0.1,10,6,"kg"],b:["المسافة (×10⁶)",1,100,10,"m"],f:(a,b)=>{const F=6.674e-11*(a*1e24)*(6e24)/Math.pow(b*1e6,2);return `قوة التجاذب مع جسم 6×10²⁴ kg: F = ${F.toExponential(1)} N — تنقص مع مربع المسافة.`;}},
+{n:"كسوف الشمس",c:"modern",e:"eclipse",m:"solar",a:["انحراف القمر عن خط الشمس–الأرض",0,100,50,""],b:["بعد القمر النسبي",80,120,100,""],f:(a,b)=>Math.abs(a-50)<10?`القمر بين الشمس والأرض على خط واحد تقريبًا: كسوف (كلي/جزئي حسب البعد).`:`القمر منحرف عن الخط: لا كسوف، يمر ظله بعيدًا عن الأرض.`},
+{n:"خسوف القمر",c:"modern",e:"eclipse",m:"lunar",a:["انحراف القمر عن خط الشمس–الأرض",0,100,50,""],b:["طور القمر النسبي",80,120,100,""],f:(a,b)=>Math.abs(a-50)<10?`الأرض بين الشمس والقمر: يدخل القمر ظل الأرض — خسوف قمري يُرى من نصف الأرض الليلي.`:`القمر خارج ظل الأرض: لا خسوف.`},
+{n:"الطيف الكهرومغناطيسي",c:"modern",e:"wave",m:"em",a:["التردد (×10¹⁴)",0.1,100,5,"Hz"],b:["السعة",1,10,5,""],f:(a,b)=>{const lam=3e8/(a*1e14)*1e9;const zone=a<0.01?"راديوي":a<4.3?"تحت أحمر":a<7.5?"ضوء مرئي":a<100?"فوق بنفسجي":"أعلى طاقة";return `الطول الموجي λ = c/f ≈ ${lam>=1000?(lam/1000).toFixed(1)+" µm":lam.toFixed(0)+" nm"} — ضمن المجال: ${zone}.`;}}
+];
+const extraGrid=document.getElementById("extraGrid");
+const genSims=[];
+function fmt(v){return (Math.round(v*100)/100).toString();}
+CATALOG.forEach((entry,i)=>{
+  const card=document.createElement("article");
+  card.className="card"; card.dataset.cat=entry.c;
+  card.innerHTML=`
+    <span class="tag">${{mech:"الميكانيك",energy:"الطاقة والشغل",elec:"الكهرباء والمغناطيسية",optics:"البصريات",waves:"الموجات والاهتزازات",modern:"الفيزياء الحديثة والفلك"}[entry.c]}</span>
+    <h3>${entry.n}</h3>
+    <canvas id="genCanvas${i}" width="640" height="440"></canvas>
+    <div class="controls">
+      <label>${entry.a[0]} <output id="genAVal${i}">${fmt(entry.a[3])} ${entry.a[4]}</output></label>
+      <input type="range" id="genA${i}" min="${entry.a[1]}" max="${entry.a[2]}" step="${(entry.a[2]-entry.a[1])/100}" value="${entry.a[3]}">
+      <label>${entry.b[0]} <output id="genBVal${i}">${fmt(entry.b[3])} ${entry.b[4]}</output></label>
+      <input type="range" id="genB${i}" min="${entry.b[1]}" max="${entry.b[2]}" step="${(entry.b[2]-entry.b[1])/100}" value="${entry.b[3]}">
+    </div>
+    <div class="row">
+      <button class="primary" id="genPlay${i}"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 5h4v14H6zM14 5h4v14h-4z"/></svg> <span>إيقاف</span></button>
+      <button id="genReset${i}"><svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5V1L7 6l5 5V7c3.3 0 6 2.7 6 6s-2.7 6-6 6-6-2.7-6-6H4c0 4.4 3.6 8 8 8s8-3.6 8-8-3.6-8-8-8z"/></svg> إعادة</button>
+    </div>
+    <div class="readout" id="genRead${i}"></div>`;
+  extraGrid.appendChild(card);
+  const sim={entry, i, cv:card.querySelector("canvas"), t:i*0.7, playing:true, visible:false,
+             a:entry.a[3], b:entry.b[3], pts:null};
+  sim.ctx=sim.cv.getContext("2d"); sim.W=sim.W||640; sim.W=sim.cv.width; sim.H=sim.cv.height;
+  genSims.push(sim);
+  const upd=()=>{
+    sim.a=parseFloat(document.getElementById("genA"+i).value);
+    sim.b=parseFloat(document.getElementById("genB"+i).value);
+    document.getElementById("genAVal"+i).textContent=fmt(sim.a)+" "+entry.a[4];
+    document.getElementById("genBVal"+i).textContent=fmt(sim.b)+" "+entry.b[4];
+    document.getElementById("genRead"+i).textContent=entry.f(sim.a,sim.b);
+    if(!sim.playing) drawSim(sim);
+  };
+  document.getElementById("genA"+i).addEventListener("input",upd);
+  document.getElementById("genB"+i).addEventListener("input",upd);
+  document.getElementById("genPlay"+i).addEventListener("click",e=>{
+    sim.playing=!sim.playing;
+    e.currentTarget.querySelector("span").textContent=sim.playing?"إيقاف":"تشغيل";
+  });
+  document.getElementById("genReset"+i).addEventListener("click",()=>{sim.t=0; if(!sim.playing) drawSim(sim);});
+  document.getElementById("genRead"+i).textContent=entry.f(sim.a,sim.b);
+});
+function arrow(ctx,x1,y1,x2,y2,color){
+  ctx.strokeStyle=color; ctx.fillStyle=color; ctx.lineWidth=3;
+  ctx.beginPath(); ctx.moveTo(x1,y1); ctx.lineTo(x2,y2); ctx.stroke();
+  const ang=Math.atan2(y2-y1,x2-x1);
+  ctx.beginPath(); ctx.moveTo(x2,y2);
+  ctx.lineTo(x2-10*Math.cos(ang-0.4),y2-10*Math.sin(ang-0.4));
+  ctx.lineTo(x2-10*Math.cos(ang+0.4),y2-10*Math.sin(ang+0.4));
+  ctx.closePath(); ctx.fill();
+}
+function drawSim(s){
+  const {ctx,W,H}=s, a=s.a, b=s.b, t=s.t, e=s.entry;
+  ctx.clearRect(0,0,W,H);
+  ctx.fillStyle="#94a3b8"; ctx.font="14px Tahoma";
+  switch(e.e){
+    case "move": {
+      const y=H-80; ctx.strokeStyle="#334155"; ctx.lineWidth=3;
+      ctx.beginPath(); ctx.moveTo(30,y); ctx.lineTo(W-30,y); ctx.stroke();
+      let frac;
+      if(e.m==="accel"){ const acc=e.d?a/b:a; frac=((0.5*acc*t*t)%10)/10; }
+      else if(e.m==="decel"){ frac=(t*0.25)%1; frac=1-Math.pow(1-frac,2); }
+      else frac=(t*0.18*(0.5+a/20))%1;
+      const x=50+frac*(W-120);
+      ctx.fillStyle="#38bdf8"; ctx.fillRect(x-26,y-34,52,26);
+      ctx.fillStyle="#0f172a"; ctx.beginPath(); ctx.arc(x-14,y,8,0,7); ctx.arc(x+14,y,8,0,7); ctx.fill();
+      arrow(ctx,x,y-52,x+40+a*2,y-52,"#facc15");
+      break; }
+    case "circular": {
+      const cx=W/2, cy=H/2, r=40+a*12;
+      ctx.strokeStyle="#334155"; ctx.lineWidth=2; ctx.beginPath(); ctx.arc(cx,cy,r,0,7); ctx.stroke();
+      const ang=t*b/a;
+      const x=cx+r*Math.cos(ang), y=cy+r*Math.sin(ang);
+      ctx.fillStyle="#facc15"; ctx.beginPath(); ctx.arc(cx,cy,14,0,7); ctx.fill();
+      ctx.fillStyle="#38bdf8"; ctx.beginPath(); ctx.arc(x,y,12,0,7); ctx.fill();
+      arrow(ctx,x,y,x-22*Math.sin(ang),y+22*Math.cos(ang),"#4ade80");
+      arrow(ctx,x,y,cx,cy,"#f87171");
+      break; }
+    case "incline": {
+      const ang=a*Math.PI/180, x0=90, y0=H-70, len=400;
+      const x1=x0+len*Math.cos(ang), y1=y0-len*Math.sin(ang);
+      ctx.strokeStyle="#f1f5f9"; ctx.lineWidth=4; ctx.beginPath(); ctx.moveTo(x0,y0); ctx.lineTo(x1,y1); ctx.lineTo(x1,y0); ctx.closePath(); ctx.stroke();
+      const d=0.45, bx=x0+len*d*Math.cos(ang), by=y0-len*d*Math.sin(ang);
+      ctx.save(); ctx.translate(bx,by); ctx.rotate(-ang);
+      ctx.fillStyle="#38bdf8"; ctx.fillRect(-24,-42,48,30);
+      ctx.restore();
+      arrow(ctx,bx,by-12,bx,by+58,"#f87171"); /* gravity: down */
+      const nx=bx+52*Math.sin(ang), ny=by-12-52*Math.cos(ang);
+      arrow(ctx,bx,by-12,nx,ny,"#4ade80"); /* normal: perpendicular to surface */
+      ctx.fillStyle="#4ade80"; ctx.fillText("N",nx+8,ny);
+      ctx.fillStyle="#f87171"; ctx.fillText("P",bx+8,by+62);
+      break; }
+    case "spring": {
+      const y=H/2, x0=60; ctx.fillStyle="#334155"; ctx.fillRect(x0-10,y-90,10,180);
+      let stretch, massX;
+      if(e.m==="osc"){ stretch=90+55*Math.cos(t*3.2); }
+      else { stretch=60+Math.min((b/a)*620,240); }
+      massX=x0+stretch+120;
+      ctx.strokeStyle="#38bdf8"; ctx.lineWidth=3; ctx.beginPath(); ctx.moveTo(x0,y);
+      const coils=9, seg=(massX-x0)/coils;
+      for(let k=1;k<coils;k++){ ctx.lineTo(x0+seg*k, y+(k%2? -22:22)); }
+      ctx.lineTo(massX,y); ctx.stroke();
+      ctx.fillStyle="#facc15"; ctx.fillRect(massX,y-30,58,60);
+      break; }
+    case "collision": {
+      const y=H/2, mid=W/2, ph=t%3;
+      let x1,x2,r1=16+a*2.2,r2=16+b*2.2;
+      if(ph<1.4){ x1=80+ (ph/1.4)*(mid-r1-90); x2=mid+70; }
+      else if(e.m==="stick"){ const x=mid+ (ph-1.4)*45; x1=x-r2; x2=x; }
+      else if(e.m==="momentum"){ x1=mid-r1; x2=mid+30+(ph-1.4)*150; }
+      else { x1=mid-r1-(ph-1.4)*60; x2=mid+r1+(ph-1.4)*130; }
+      ctx.fillStyle="#38bdf8"; ctx.beginPath(); ctx.arc(x1,y,r1,0,7); ctx.fill();
+      ctx.fillStyle="#f87171"; ctx.beginPath(); ctx.arc(x2,y,r2,0,7); ctx.fill();
+      ctx.strokeStyle="#334155"; ctx.beginPath(); ctx.moveTo(30,y+60); ctx.lineTo(W-30,y+60); ctx.stroke();
+      break; }
+    case "lever": {
+      const cx=W/2, cy=H/2+30, tilt=Math.max(-0.32,Math.min(0.32,(b*0.6-a*0.4)*0.012))*(1+0.06*Math.sin(t*2));
+      ctx.fillStyle="#334155"; ctx.beginPath(); ctx.moveTo(cx,cy); ctx.lineTo(cx-26,cy+70); ctx.lineTo(cx+26,cy+70); ctx.closePath(); ctx.fill();
+      ctx.save(); ctx.translate(cx,cy); ctx.rotate(tilt);
+      ctx.fillStyle="#facc15"; ctx.fillRect(-230,-8,460,14);
+      ctx.fillStyle="#38bdf8"; ctx.fillRect(-190,-44,42,36);
+      ctx.fillStyle="#f87171"; ctx.fillRect(150,-44,42,36);
+      ctx.restore();
+      break; }
+    case "fallDrag": {
+      const ph=(t*0.55)%1, y=40+ (H-120)*(1-Math.exp(-3*ph))/(1-Math.exp(-3));
+      const x=W/2;
+      if(b>1){ ctx.strokeStyle="#f1f5f9"; ctx.lineWidth=3; ctx.beginPath(); ctx.arc(x,y-16,44,Math.PI,0); ctx.stroke();
+        ctx.beginPath(); ctx.moveTo(x-44,y-16); ctx.lineTo(x,y+16); ctx.lineTo(x+44,y-16); ctx.stroke(); }
+      ctx.fillStyle="#facc15"; ctx.beginPath(); ctx.arc(x,y+24,15,0,7); ctx.fill();
+      ctx.strokeStyle="#334155"; ctx.beginPath(); ctx.moveTo(30,H-40); ctx.lineTo(W-30,H-40); ctx.stroke();
+      break; }
+    case "planet": {
+      const cx=W/2, cy=H/2, r=55+b*3.4;
+      ctx.fillStyle="#38bdf8"; ctx.beginPath(); ctx.arc(cx,cy,r,0,7); ctx.fill();
+      ctx.fillStyle="#facc15"; ctx.beginPath(); ctx.arc(cx,cy- r-26,13,0,7); ctx.fill();
+      arrow(ctx,cx,cy-r-10,cx,cy-r+28,"#f87171");
+      ctx.fillStyle="#f1f5f9"; ctx.fillText("P = m g",cx-24,cy+6);
+      break; }
+    case "energy": {
+      const ph=0.5+0.5*Math.cos(t*2.2), ke=e.m==="conv"?(1-ph):Math.min(1,b/30), pe=e.m==="conv"?ph:Math.min(1,b/30);
+      const y=60+ (1-ph)*(H-160), x=110;
+      ctx.fillStyle="#facc15"; ctx.beginPath(); ctx.arc(x,e.m==="conv"?y:H-90,15,0,7); ctx.fill();
+      ctx.strokeStyle="#334155"; ctx.beginPath(); ctx.moveTo(50,H-60); ctx.lineTo(230,H-60); ctx.stroke();
+      const bx=330, bw=90, bh=240;
+      ctx.fillStyle="#1e293b"; ctx.fillRect(bx,H-60-bh,bw,bh); ctx.fillRect(bx+130,H-60-bh,bw,bh);
+      ctx.fillStyle="#f87171"; ctx.fillRect(bx,H-60-bh*pe,bw,bh*pe);
+      ctx.fillStyle="#4ade80"; ctx.fillRect(bx+130,H-60-bh*ke,bw,bh*ke);
+      ctx.fillStyle="#f1f5f9"; ctx.fillText("Ep",bx+34,H-34); ctx.fillText("Ec",bx+164,H-34);
+      break; }
+    case "circuit": {
+      const x1=80,x2=W-80,y1=70,y2=H-80;
+      ctx.strokeStyle="#f1f5f9"; ctx.lineWidth=3; ctx.strokeRect(x1,y1,x2-x1,y2-y1);
+      ctx.strokeStyle="#38bdf8"; ctx.beginPath();
+      let rx=W/2-55; ctx.moveTo(rx,y1);
+      for(let k=0;k<6;k++){ rx+=9; ctx.lineTo(rx,y1-13); rx+=9; ctx.lineTo(rx,y1+13); }
+      ctx.lineTo(W/2+55,y1); ctx.stroke();
+      const I=e.m==="series"?12/(a+b):e.m==="parallel"?12/(a*b/(a+b)):a/Math.max(b,1);
+      const off=(t*I*14)%26; ctx.fillStyle="#facc15";
+      for(let x=x1+off;x<x2;x+=26){ ctx.beginPath(); ctx.arc(x,y1,4,0,7); ctx.fill(); }
+      for(let y=y1+off;y<y2;y+=26){ ctx.beginPath(); ctx.arc(x2,y,4,0,7); ctx.fill(); }
+      break; }
+    case "field": {
+      const cx=W/2, cy=H/2;
+      if(e.m==="wire"){
+        for(let r=28;r<190;r+=32){ ctx.strokeStyle="#38bdf8"; ctx.lineWidth=2; ctx.beginPath(); ctx.arc(cx,cy,r,0,7); ctx.stroke(); }
+        ctx.fillStyle="#facc15"; ctx.beginPath(); ctx.arc(cx,cy,10,0,7); ctx.fill();
+      } else if(e.m==="magnet"){
+        ctx.fillStyle="#f87171"; ctx.fillRect(cx-90,cy-22,90,44);
+        ctx.fillStyle="#38bdf8"; ctx.fillRect(cx,cy-22,90,44);
+        ctx.fillStyle="#0f172a"; ctx.fillText("N",cx-52,cy+6); ctx.fillText("S",cx+42,cy+6);
+        ctx.strokeStyle="#facc15"; ctx.lineWidth=2;
+        for(let k=1;k<=3;k++){ ctx.beginPath(); ctx.ellipse(cx,cy,110+k*36,44+k*22,0,0,7); ctx.stroke(); }
+        const ang=t*1.5, bx=cx+150*Math.cos(ang), by=cy+70*Math.sin(ang);
+        arrow(ctx,bx-14,by,bx+14,by,"#4ade80");
+      } else {
+        const y=cy+60; ctx.strokeStyle="#f1f5f9"; ctx.lineWidth=4;
+        ctx.beginPath(); ctx.moveTo(90,y); ctx.lineTo(W-90,y); ctx.stroke();
+        arrow(ctx,W/2,y-50,W/2,y-50-Math.min(70,a*b*6),"#facc15");
+        ctx.fillStyle="#facc15"; ctx.fillText("F = B I L",W/2-30,y-130);
+      }
+      break; }
+    case "curve": {
+      const x0=70,y0=H-60, cw=W-140, ch=H-130;
+      ctx.strokeStyle="#64748b"; ctx.lineWidth=2;
+      ctx.beginPath(); ctx.moveTo(x0,40); ctx.lineTo(x0,y0); ctx.lineTo(x0+cw,y0); ctx.stroke();
+      ctx.strokeStyle="#38bdf8"; ctx.lineWidth=3; ctx.beginPath();
+      for(let px=0;px<=cw;px+=6){ const u=px/cw; let v;
+        if(e.m==="charge"||e.m==="growth") v=1-Math.exp(-3*u);
+        else if(e.m==="resonance"){ const r=0.2+u*1.8; v=(1/Math.sqrt(Math.pow(1-r*r,2)+Math.pow(2*b*r,2))); v=Math.min(1,v/4); }
+        else v=Math.exp(-3*u);
+        const yy=y0-v*ch; px===0?ctx.moveTo(x0+px,yy):ctx.lineTo(x0+px,yy); }
+      ctx.stroke();
+      const u=(t*0.14)%1; let v;
+      if(e.m==="charge"||e.m==="growth") v=1-Math.exp(-3*u);
+      else if(e.m==="resonance"){ const r=0.2+u*1.8; v=Math.min(1,(1/Math.sqrt(Math.pow(1-r*r,2)+Math.pow(2*b*r,2)))/4); }
+      else v=Math.exp(-3*u);
+      ctx.fillStyle="#facc15"; ctx.beginPath(); ctx.arc(x0+u*cw,y0-v*ch,7,0,7); ctx.fill();
+      break; }
+    case "wave": {
+      const mid=H/2;
+      ctx.strokeStyle="#334155"; ctx.beginPath(); ctx.moveTo(30,mid); ctx.lineTo(W-30,mid); ctx.stroke();
+      if(e.m==="diff"){
+        ctx.strokeStyle="#38bdf8"; ctx.lineWidth=3; ctx.beginPath();
+        for(let x=30;x<W/2-40;x+=6){ const y=mid+Math.sin(x*0.09-t*7)*26; x===30?ctx.moveTo(x,y):ctx.lineTo(x,y); } ctx.stroke();
+        ctx.fillStyle="#f1f5f9"; ctx.fillRect(W/2-40,40,10,H-80);
+        for(let k=-2;k<=2;k++){ ctx.strokeStyle=`hsl(${k*40+200},90%,65%)`; ctx.beginPath(); ctx.arc(W/2-30,mid,60, k*0.32-0.14,k*0.32+0.14); ctx.stroke(); }
+        break; }
+      ctx.strokeStyle="#38bdf8"; ctx.lineWidth=3; ctx.beginPath();
+      for(let x=30;x<W-30;x+=5){
+        let y;
+        if(e.m==="stand"){ const k=Math.max(1,Math.round(a)); y=mid+Math.sin(k*Math.PI*(x-30)/(W-60))*55*Math.cos(t*4); }
+        else if(e.m==="super"){ y=mid+Math.sin(x*0.06-t*6)*a*4+Math.sin(x*0.06-t*6+a*Math.PI/180)*a*4; }
+        else { const lam=e.m==="em"?120:Math.max(45,170-b*1.1); y=mid+Math.sin(2*Math.PI*(x-30)/lam - t*(2+b*0.35))*Math.min(62,a*7); }
+        x===30?ctx.moveTo(x,y):ctx.lineTo(x,y); }
+      ctx.stroke();
+      if(e.m==="super"){ ctx.strokeStyle="#facc15"; ctx.lineWidth=2; ctx.beginPath();
+        for(let x=30;x<W-30;x+=5){ const y=mid+(Math.sin(x*0.06-t*6)+Math.sin(x*0.06-t*6+a*Math.PI/180))*a*4; x===30?ctx.moveTo(x,y):ctx.lineTo(x,y); } ctx.stroke(); }
+      break; }
+    case "longitudinal": {
+      for(let row=0;row<5;row++){ const y=90+row*58;
+        for(let k=0;k<22;k++){ const baseX=60+k*24; const x=baseX+Math.sin(k*0.7-t*6)* (3+a*0.8);
+          ctx.fillStyle="#38bdf8"; ctx.beginPath(); ctx.arc(x,y,5,0,7); ctx.fill(); } }
+      break; }
+    case "doppler": {
+      const cx=W/2+50, cy=H/2;
+      for(let k=0;k<7;k++){ const age=((t*46+k*34)%240); const r=age*0.95; const ccx=cx-age*(a/260);
+        ctx.strokeStyle="rgba(56,189,248,.65)"; ctx.lineWidth=2; ctx.beginPath(); ctx.arc(ccx,cy,r,0,7); ctx.stroke(); }
+      ctx.fillStyle="#facc15"; ctx.beginPath(); ctx.arc(cx,cy,13,0,7); ctx.fill();
+      arrow(ctx,cx,cy+38,cx+a*0.7,cy+38,"#facc15");
+      ctx.fillStyle="#f1f5f9"; ctx.fillText("source ->",cx-30,cy+66);
+      break; }
+    case "lens": {
+      const cy=H/2+26, cx=W/2;
+      const f=a, dob=b, isDiv=(e.m==="div"||e.m==="mirrorV");
+      const ff=isDiv?-f:f;
+      let di=1/(1/ff-1/dob); if(!isFinite(di)) di=9999;
+      const scale=Math.min(2.6,(cx-70)/Math.max(dob,Math.abs(di)>300?dob:Math.abs(di)));
+      const ox=cx-dob*scale, ix=cx+di*scale;
+      ctx.strokeStyle="#334155"; ctx.beginPath(); ctx.moveTo(30,cy); ctx.lineTo(W-30,cy); ctx.stroke();
+      if(e.m==="mirrorC"||e.m==="mirrorV"){
+        ctx.strokeStyle="#f1f5f9"; ctx.lineWidth=5; ctx.beginPath(); ctx.arc(cx+(e.m==="mirrorC"?26:-26),cy,86,-1.1,1.1); ctx.stroke();
+      } else {
+        ctx.strokeStyle="#38bdf8"; ctx.lineWidth=4; ctx.beginPath(); ctx.moveTo(cx,cy-105); ctx.lineTo(cx,cy+105); ctx.stroke();
+        ctx.fillStyle="#38bdf8";
+        ctx.beginPath(); ctx.moveTo(cx,cy-118); ctx.lineTo(cx-8,cy-100); ctx.lineTo(cx+8,cy-100); ctx.closePath(); ctx.fill();
+        ctx.beginPath(); ctx.moveTo(cx,cy+118); ctx.lineTo(cx-8,cy+100); ctx.lineTo(cx+8,cy+100); ctx.closePath(); ctx.fill();
+      }
+      ctx.fillStyle="#facc15"; ctx.fillRect(cx-f*scale-2,cy-4,4,8); ctx.fillRect(cx+f*scale-2,cy-4,4,8);
+      arrow(ctx,ox,cy,ox,cy-58,"#facc15");
+      if(isFinite(ix)&&ix>30&&ix<W-20){
+        const imageTopY=cy+58*di/dob;
+        arrow(ctx,ix,cy,ix,imageTopY,"#4ade80");
+      }
+      ctx.strokeStyle="rgba(250,204,21,.85)"; ctx.lineWidth=2;
+      ctx.beginPath(); ctx.moveTo(ox,cy-58); ctx.lineTo(cx,cy-58); ctx.lineTo(cx,cy); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(ox,cy-58); ctx.lineTo(cx,cy); ctx.stroke();
+      break; }
+    case "reflect": {
+      const mx=W/2, top=70, bot=H-60;
+      ctx.fillStyle="#38bdf8"; ctx.fillRect(mx-5,top,10,bot-top);
+      const ang=a*Math.PI/180, tilt=b*Math.PI/180;
+      const ix=mx, iy=H/2, len=190;
+      const sx=ix-len*Math.sin(ang), sy=iy-len*Math.cos(ang);
+      const rx=ix+len*Math.sin(ang+2*tilt), ry=iy-len*Math.cos(ang+2*tilt);
+      arrow(ctx,sx,sy,ix,iy,"#facc15"); arrow(ctx,ix,iy,rx,ry,"#4ade80");
+      ctx.setLineDash([5,5]); ctx.strokeStyle="#94a3b8"; ctx.beginPath(); ctx.moveTo(ix,iy-120); ctx.lineTo(ix,iy+20); ctx.stroke(); ctx.setLineDash([]);
+      break; }
+    case "refract": {
+      const mid=H/2, cx=W/2;
+      ctx.fillStyle="rgba(56,189,248,.14)"; ctx.fillRect(30,mid,W-60,mid-50);
+      ctx.strokeStyle="#64748b"; ctx.beginPath(); ctx.moveTo(30,mid); ctx.lineTo(W-30,mid); ctx.stroke();
+      const inc=a*Math.PI/180, len=180;
+      const sx=cx-len*Math.sin(inc), sy=mid-len*Math.cos(inc);
+      arrow(ctx,sx,sy,cx,mid,"#facc15");
+      if(e.m==="total"){
+        const crit=Math.asin(1/b);
+        if(a*Math.PI/180>crit){ arrow(ctx,cx,mid,cx+len*Math.sin(inc),mid-len*Math.cos(inc),"#4ade80"); }
+        else { const ra=Math.asin(Math.sin(inc)/1); arrow(ctx,cx,mid,cx+len*Math.sin(ra),mid+len*Math.cos(ra),"#4ade80"); }
+      } else {
+        const ra=Math.asin(Math.sin(inc)/b);
+        arrow(ctx,cx,mid,cx+len*Math.sin(ra),mid+len*Math.cos(ra),"#4ade80");
+      }
+      ctx.setLineDash([5,5]); ctx.strokeStyle="#94a3b8"; ctx.beginPath(); ctx.moveTo(cx,mid-130); ctx.lineTo(cx,mid+130); ctx.stroke(); ctx.setLineDash([]);
+      break; }
+    case "prism": {
+      const px=W/2, py=H/2, s=105;
+      ctx.strokeStyle="#f1f5f9"; ctx.lineWidth=3;
+      ctx.beginPath(); ctx.moveTo(px,py-s); ctx.lineTo(px-s,py+s*0.7); ctx.lineTo(px+s,py+s*0.7); ctx.closePath(); ctx.stroke();
+      arrow(ctx,70,py-30,px-52,py+6,"#facc15");
+      if(e.m==="spectrum"){
+        const cols=["#f87171","#fb923c","#facc15","#4ade80","#38bdf8","#a78bfa"];
+        cols.forEach((col,k)=>{ arrow(ctx,px+42,py+24+k*3,W-60,py-52+k*22,col); });
+      } else {
+        ctx.strokeStyle="#facc15"; ctx.lineWidth=3; ctx.beginPath(); ctx.moveTo(px-52,py+6); ctx.lineTo(px+42,py+24); ctx.stroke();
+        arrow(ctx,px+42,py+24,W-70,py+64+(a-50),"#facc15");
+      }
+      break; }
+    case "orbit": {
+      const cx=W/2, cy=H/2, rx=70+a*(e.m==="sat"?2.2:15), ry=rx*(e.m==="sat"?1:(1-b*0.72));
+      ctx.strokeStyle="#334155"; ctx.lineWidth=2; ctx.beginPath(); ctx.ellipse(cx,cy,rx,ry,0,0,7); ctx.stroke();
+      ctx.fillStyle="#facc15"; ctx.beginPath(); ctx.arc(cx,cy,e.m==="sat"?22:17,0,7); ctx.fill();
+      const ang=t*(e.m==="sat"?1.4:0.9);
+      const x=cx+rx*Math.cos(ang), y=cy+ry*Math.sin(ang);
+      ctx.fillStyle="#38bdf8"; ctx.beginPath(); ctx.arc(x,y,11,0,7); ctx.fill();
+      break; }
+    case "gravity": {
+      const cy=H/2, d=90+b*3.4, x1=W/2-d/2, x2=W/2+d/2;
+      ctx.fillStyle="#38bdf8"; ctx.beginPath(); ctx.arc(x1,cy,20+a*2.4,0,7); ctx.fill();
+      ctx.fillStyle="#f87171"; ctx.beginPath(); ctx.arc(x2,cy,26,0,7); ctx.fill();
+      arrow(ctx,x1+34,cy,x1+86,cy,"#facc15"); arrow(ctx,x2-34,cy,x2-86,cy,"#facc15");
+      break; }
+    case "eclipse": {
+      const y=H/2, sunX=90, earthX=W-110;
+      ctx.fillStyle="#facc15"; ctx.beginPath(); ctx.arc(sunX,y,34,0,7); ctx.fill();
+      ctx.fillStyle="#f1f5f9"; ctx.font="13px Tahoma"; ctx.fillText("Sun",sunX-12,y+62);
+      const off=(a-50)*2.1;
+      if(e.m==="solar"){
+        const mx=W/2;
+        ctx.strokeStyle="rgba(250,204,21,.35)"; ctx.beginPath(); ctx.moveTo(sunX,y); ctx.lineTo(earthX,y+off*0.2); ctx.stroke();
+        ctx.fillStyle="#94a3b8"; ctx.beginPath(); ctx.arc(mx,y+off,19,0,7); ctx.fill();
+        ctx.fillStyle="#38bdf8"; ctx.beginPath(); ctx.arc(earthX,y,25,0,7); ctx.fill();
+        ctx.fillText("Moon",mx-16,y+off+44); ctx.fillText("Earth",earthX-16,y+52);
+        if(Math.abs(a-50)<10){ ctx.fillStyle="rgba(0,0,0,.45)"; ctx.beginPath(); ctx.arc(earthX,y,25,0,7); ctx.fill(); }
+      } else {
+        const mx=W-190;
+        ctx.fillStyle="#38bdf8"; ctx.beginPath(); ctx.arc(W/2,y,27,0,7); ctx.fill();
+        ctx.fillStyle="#94a3b8"; ctx.beginPath(); ctx.arc(mx,y+off,17,0,7); ctx.fill();
+        ctx.fillText("Earth",W/2-16,y+54); ctx.fillText("Moon",mx-16,y+off+42);
+        if(Math.abs(a-50)<10){ ctx.fillStyle="#f87171"; ctx.beginPath(); ctx.arc(mx,y+off,17,0,7); ctx.fill(); }
+      }
+      break; }
+    case "photo": {
+      const px=W-130, top=90, bot=H-80;
+      ctx.fillStyle="#64748b"; ctx.fillRect(px,top,16,bot-top);
+      const emits=(0.4136*a)>b;
+      for(let k=0;k<4;k++){ const yy=top+34+k*58;
+        ctx.strokeStyle=a>10?"#a78bfa":a>5?"#38bdf8":"#f87171"; ctx.lineWidth=3; ctx.beginPath();
+        for(let x=50;x<px-8;x+=6){ const y=yy+Math.sin(x*0.22-t*9)*7; x===50?ctx.moveTo(x,y):ctx.lineTo(x,y); } ctx.stroke();
+        if(emits){ const ex=px-((t*90+k*37)%150); ctx.fillStyle="#4ade80"; ctx.beginPath(); ctx.arc(ex,yy,5,0,7); ctx.fill(); } }
+      break; }
+    default: {
+      ctx.fillStyle="#38bdf8"; ctx.beginPath(); ctx.arc(W/2+Math.cos(t*3)*90,H/2+Math.sin(t*3)*40,16,0,7); ctx.fill();
+    }
+  }
+}
+const genObserver=("IntersectionObserver" in window)?new IntersectionObserver(entries=>{
+  entries.forEach(en=>{
+    const sim=genSims.find(s=>s.cv===en.target);
+    if(sim) sim.visible=en.isIntersecting;
+  });
+},{rootMargin:"80px"}):null;
+genSims.forEach(s=>{ s.visible=!genObserver; if(genObserver) genObserver.observe(s.cv); drawSim(s); });
+let genLast=null;
+function genLoop(ts){
+  if(genLast===null) genLast=ts;
+  const dt=Math.min((ts-genLast)/1000,0.05); genLast=ts;
+  genSims.forEach(s=>{ if(s.visible){ if(s.playing) s.t+=dt; drawSim(s); } });
+  requestAnimationFrame(genLoop);
+}
+requestAnimationFrame(genLoop);
 
 /* ---------- Quiz ---------- */
 const questions = [
