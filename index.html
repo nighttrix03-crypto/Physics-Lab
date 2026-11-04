@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>مختبر الفيزياء | Physics Lab</title>
+<meta name="description" content="مختبر فيزياء تفاعلي باللغة العربية، موافق للمنهاج الجزائري: محاكاة تفاعلية ودروس واختبارات.">
+<style>
+  :root{
+    --bg:#0f172a; --panel:#1e293b; --panel2:#162032; --text:#f1f5f9; --muted:#94a3b8;
+    --accent:#38bdf8; --accent2:#facc15; --ok:#4ade80; --bad:#f87171; --line:#334155;
+    --radius:16px;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;font-family:"Segoe UI",Tahoma,Arial,sans-serif;background:var(--bg);color:var(--text);line-height:1.7}
+  a{color:var(--accent)}
+  header{position:sticky;top:0;z-index:10;background:rgba(15,23,42,.92);backdrop-filter:blur(8px);border-bottom:1px solid var(--line)}
+  .wrap{max-width:1100px;margin:auto;padding:0 16px}
+  .nav{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 0;flex-wrap:wrap}
+  .brand{font-weight:800;font-size:1.25rem}
+  .brand span{color:var(--accent)}
+  .nav nav{display:flex;gap:14px;flex-wrap:wrap}
+  .nav nav a{color:var(--text);text-decoration:none;font-weight:600}
+  .nav nav a:hover{color:var(--accent)}
+  .hero{padding:44px 0 22px;text-align:center}
+  .hero h1{font-size:2.2rem;margin:0 0 8px}
+  .hero h1 span{color:var(--accent)}
+  .hero p{color:var(--muted);max-width:680px;margin:0 auto}
+  .stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin:22px 0}
+  .stat{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:16px;text-align:center}
+  .stat b{display:block;font-size:1.7rem;color:var(--accent2)}
+  section{padding:22px 0}
+  h2{border-inline-start:5px solid var(--accent);padding-inline-start:10px;margin:0 0 14px}
+  .note{background:var(--panel2);border:1px dashed var(--accent);border-radius:var(--radius);padding:12px 16px;color:var(--muted)}
+  .filters{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px}
+  button{cursor:pointer;border:1px solid var(--line);background:var(--panel);color:var(--text);border-radius:999px;padding:8px 16px;font-family:inherit;font-weight:700}
+  button:hover{border-color:var(--accent)}
+  button.active,button.primary{background:var(--accent);color:#082f49;border-color:var(--accent)}
+  .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:16px}
+  .card{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:16px}
+  .card h3{margin-top:0}
+  .tag{display:inline-block;background:var(--panel2);border:1px solid var(--line);color:var(--accent);border-radius:999px;padding:2px 10px;font-size:.82rem;font-weight:700}
+  canvas{width:100%;height:220px;background:#0b1220;border:1px solid var(--line);border-radius:12px;display:block}
+  .controls{display:grid;gap:8px;margin-top:12px}
+  .controls label{display:flex;justify-content:space-between;gap:10px;font-size:.95rem;color:var(--muted)}
+  .controls output{color:var(--accent2);font-weight:800;direction:ltr}
+  input[type=range]{width:100%;accent-color:var(--accent)}
+  .row{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px;align-items:center}
+  .readout{background:#0b1220;border:1px solid var(--line);border-radius:12px;padding:10px 12px;margin-top:10px;font-size:.95rem}
+  .readout b{color:var(--accent2);direction:ltr;display:inline-block}
+  details{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:14px 16px;margin-bottom:12px}
+  summary{cursor:pointer;font-weight:800}
+  .formula{background:#0b1220;border:1px solid var(--line);border-radius:10px;padding:8px 12px;text-align:center;direction:ltr;font-family:Consolas,monospace;color:var(--accent2);margin:8px 0}
+  .quiz-q{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:16px;margin-bottom:12px}
+  .quiz-q legend{font-weight:800;padding:0 6px}
+  .quiz-q label{display:block;padding:6px 10px;border:1px solid transparent;border-radius:10px;cursor:pointer}
+  .quiz-q label:hover{border-color:var(--line)}
+  .correct{color:var(--ok);font-weight:800}
+  .wrong{color:var(--bad);font-weight:800}
+  footer{border-top:1px solid var(--line);color:var(--muted);text-align:center;padding:22px 0 34px;margin-top:20px}
+  @media (max-width:560px){.hero h1{font-size:1.6rem}canvas{height:190px}}
+</style>
+</head>
+<body>
+<header>
+  <div class="wrap nav">
+    <div class="brand">🔬 مختبر <span>الفيزياء</span></div>
+    <nav>
+      <a href="#sims">المحاكاة</a>
+      <a href="#lessons">الدروس</a>
+      <a href="#quiz">الاختبار</a>
+    </nav>
+  </div>
+</header>
+
+<main class="wrap">
+  <div class="hero">
+    <h1>مختبر <span>الفيزياء</span> التفاعلي</h1>
+    <p>استكشف الظواهر الفيزيائية بنفسك: غيّر القيم، شغّل المحاكاة، لاحظ النتيجة، ثم اختبر فهمك. محتوى بالعربية موافق للمنهاج الجزائري.</p>
+    <div class="stats">
+      <div class="stat"><b>4</b>محاكاة تفاعلية عاملة الآن</div>
+      <div class="stat"><b>4</b>دروس ملخّصة</div>
+      <div class="stat"><b>8</b>أسئلة اختبار الآن</div>
+      <div class="stat"><b>72 / 288</b>الهدف: محاكاة / سؤالًا</div>
+    </div>
+    <p class="note">هذه النسخة الأولى المنشورة في المستودع. تُضاف بقية المحاكيات والدروس والأسئلة تدريجيًا حتى بلوغ الهدف الكامل.</p>
+  </div>
+
+  <section id="sims">
+    <h2>المحاكاة التفاعلية</h2>
+    <div class="filters" role="group" aria-label="تصفية المحاكيات">
+      <button class="active" data-filter="all">الكل</button>
+      <button data-filter="mech">الميكانيك</button>
+      <button data-filter="elec">الكهرباء</button>
+    </div>
+    <div class="grid">
+
+      <article class="card" data-cat="mech">
+        <span class="tag">الميكانيك</span>
+        <h3>البندول البسيط</h3>
+        <canvas id="pendCanvas" width="640" height="440"></canvas>
+        <div class="controls">
+          <label>طول الخيط L <output id="pendLVal">1.0 m</output></label>
+          <input type="range" id="pendL" min="0.5" max="3" step="0.1" value="1">
+          <label>الجاذبية g <output id="pendGVal">9.8 m/s²</output></label>
+          <input type="range" id="pendG" min="1.6" max="9.8" step="0.1" value="9.8">
+        </div>
+        <div class="row">
+          <button class="primary" id="pendPlay">⏸ إيقاف</button>
+          <button id="pendReset">↺ إعادة</button>
+        </div>
+        <div class="readout">الدور النظري: <b id="pendPeriod">2.01 s</b> &nbsp;|&nbsp; كلما زاد الطول زاد الدور، وكلما زادت الجاذبية نقص.</div>
+      </article>
+
+      <article class="card" data-cat="mech">
+        <span class="tag">الميكانيك</span>
+        <h3>حركة قذيفة</h3>
+        <canvas id="projCanvas" width="640" height="440"></canvas>
+        <div class="controls">
+          <label>السرعة الابتدائية v₀ <output id="projVVal">25 m/s</output></label>
+          <input type="range" id="projV" min="5" max="50" step="1" value="25">
+          <label>زاوية القذف θ <output id="projAVal">45°</output></label>
+          <input type="range" id="projA" min="15" max="80" step="1" value="45">
+        </div>
+        <div class="row">
+          <button class="primary" id="projFire">🚀 اقذف</button>
+          <button id="projReset">↺ إعادة</button>
+        </div>
+        <div class="readout">المدى: <b id="projRange">63.7 m</b> &nbsp;|&nbsp; أقصى ارتفاع: <b id="projHeight">15.9 m</b></div>
+      </article>
+
+      <article class="card" data-cat="mech">
+        <span class="tag">الميكانيك</span>
+        <h3>السقوط الحر</h3>
+        <canvas id="fallCanvas" width="640" height="440"></canvas>
+        <div class="controls">
+          <label>الارتفاع h <output id="fallHVal">45 m</output></label>
+          <input type="range" id="fallH" min="5" max="100" step="5" value="45">
+          <label>الكوكب (g) <output id="fallGVal">الأرض 9.8</output></label>
+          <input type="range" id="fallG" min="0" max="2" step="1" value="0">
+        </div>
+        <div class="row">
+          <button class="primary" id="fallDrop">⬇ أسقط الكرة</button>
+          <button id="fallReset">↺ إعادة</button>
+        </div>
+        <div class="readout">زمن الوصول: <b id="fallTime">3.03 s</b> &nbsp;|&nbsp; السرعة عند الاصطدام: <b id="fallSpeed">29.7 m/s</b></div>
+      </article>
+
+      <article class="card" data-cat="elec">
+        <span class="tag">الكهرباء</span>
+        <h3>قانون أوم</h3>
+        <canvas id="ohmCanvas" width="640" height="440"></canvas>
+        <div class="controls">
+          <label>التوتر V <output id="ohmVVal">12 V</output></label>
+          <input type="range" id="ohmV" min="0" max="24" step="1" value="12">
+          <label>المقاومة R <output id="ohmRVal">24 Ω</output></label>
+          <input type="range" id="ohmR" min="2" max="100" step="1" value="24">
+        </div>
+        <div class="readout">شدة التيار: <b id="ohmI">0.50 A</b> &nbsp;|&nbsp; القدرة: <b id="ohmP">6.0 W</b><br>سرعة الإلكترونات في الرسم تتناسب مع شدة التيار.</div>
+      </article>
+
+    </div>
+  </section>
+
+  <section id="lessons">
+    <h2>الدروس</h2>
+    <details>
+      <summary>1. البندول البسيط</summary>
+      <p>يتذبذب جسم معلّق بخيط حول موضع توازنه. في الاهتزازات الصغيرة يكون الدور:</p>
+      <div class="formula">T = 2π √(L/g)</div>
+      <p>الدور يكبر مع طول الخيط ويصغر مع الجاذبية، ولا يتعلق بكتلة الجسم.</p>
+    </details>
+    <details>
+      <summary>2. حركة قذيفة</summary>
+      <p>حركة مركّبة: منتظمة أفقيًا ومتسارعة عموديًا بتسارع الجاذبية.</p>
+      <div class="formula">R = v₀² · sin(2θ) / g &nbsp;&nbsp;|&nbsp;&nbsp; H = (v₀ sinθ)² / (2g)</div>
+      <p>يكون المدى أعظميًا من أجل زاوية قذف 45°.</p>
+    </details>
+    <details>
+      <summary>3. السقوط الحر</summary>
+      <p>سقوط جسم تحت تأثير ثقله فقط، دون سرعة ابتدائية:</p>
+      <div class="formula">h = ½ g t² &nbsp;&nbsp;|&nbsp;&nbsp; v = g t</div>
+      <p>كل الأجسام تسقط بنفس التسارع مهما كانت كتلتها (عند إهمال مقاومة الهواء).</p>
+    </details>
+    <details>
+      <summary>4. قانون أوم</summary>
+      <p>يربط بين التوتر وشدة التيار والمقاومة في دارة كهربائية:</p>
+      <div class="formula">V = R × I &nbsp;&nbsp;|&nbsp;&nbsp; P = V × I</div>
+      <p>عند ثبات التوتر، كلما زادت المقاومة نقصت شدة التيار.</p>
+    </details>
+  </section>
+
+  <section id="quiz">
+    <h2>اختبر نفسك</h2>
+    <div id="quizBox"></div>
+    <div class="row">
+      <button class="primary" id="checkQuiz">✔ صحّح الاختبار</button>
+      <button id="resetQuiz">↺ إعادة</button>
+      <span id="score" aria-live="polite"></span>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap">مختبر الفيزياء | Physics Lab — مشروع تعليمي بالعربية موافق للمنهاج الجزائري.</div>
+</footer>
+
+<script>
+"use strict";
+const $ = id => document.getElementById(id);
+
+/* ---------- Filters ---------- */
+document.querySelectorAll("[data-filter]").forEach(btn=>{
+  btn.addEventListener("click",()=>{
+    document.querySelectorAll("[data-filter]").forEach(b=>b.classList.remove("active"));
+    btn.classList.add("active");
+    const f = btn.dataset.filter;
+    document.querySelectorAll("#sims .card").forEach(card=>{
+      card.style.display = (f==="all" || card.dataset.cat===f) ? "" : "none";
+    });
+  });
+});
+
+function setupCanvas(id){
+  const c = $(id), ctx = c.getContext("2d");
+  return {c, ctx, W:c.width, H:c.height};
+}
+function clear(o){ o.ctx.clearRect(0,0,o.W,o.H); }
+
+/* ---------- Pendulum ---------- */
+const pend = setupCanvas("pendCanvas");
+let pTheta = 0.6, pOmega = 0, pLast = null, pRunning = true;
+function pendParams(){
+  const L = parseFloat($("pendL").value), g = parseFloat($("pendG").value);
+  $("pendLVal").textContent = L.toFixed(1)+" m";
+  $("pendGVal").textContent = g.toFixed(1)+" m/s²";
+  $("pendPeriod").textContent = (2*Math.PI*Math.sqrt(L/g)).toFixed(2)+" s";
+  return {L,g};
+}
+function pendDraw(ts){
+  const {L,g} = pendParams();
+  if(pLast===null) pLast = ts;
+  let dt = Math.min((ts-pLast)/1000, 0.05); pLast = ts;
+  if(pRunning){
+    const alpha = -(g/L)*Math.sin(pTheta);
+    pOmega += alpha*dt; pTheta += pOmega*dt;
+  }
+  clear(pend);
+  const ox = pend.W/2, oy = 50, scale = 110;
+  const len = L*scale;
+  const x = ox + len*Math.sin(pTheta), y = oy + len*Math.cos(pTheta);
+  const ctx = pend.ctx;
+  ctx.strokeStyle="#38bdf8"; ctx.lineWidth=4;
+  ctx.beginPath(); ctx.moveTo(ox-70,oy); ctx.lineTo(ox+70,oy); ctx.stroke();
+  ctx.strokeStyle="#f1f5f9"; ctx.lineWidth=2;
+  ctx.beginPath(); ctx.moveTo(ox,oy); ctx.lineTo(x,y); ctx.stroke();
+  ctx.fillStyle="#facc15"; ctx.beginPath(); ctx.arc(x,y,20,0,Math.PI*2); ctx.fill();
+  ctx.fillStyle="#0f172a"; ctx.beginPath(); ctx.arc(ox,oy,6,0,Math.PI*2); ctx.fill();
+  requestAnimationFrame(pendDraw);
+}
+$("pendPlay").addEventListener("click",e=>{ pRunning=!pRunning; e.target.textContent = pRunning?"⏸ إيقاف":"▶ تشغيل"; });
+$("pendReset").addEventListener("click",()=>{ pTheta=0.6; pOmega=0; });
+["pendL","pendG"].forEach(id=>$(id).addEventListener("input",pendParams));
+pendParams(); requestAnimationFrame(pendDraw);
+
+/* ---------- Projectile ---------- */
+const proj = setupCanvas("projCanvas");
+let projT = null, projTrail = [];
+function projParams(){
+  const v = parseFloat($("projV").value), a = parseFloat($("projA").value), g = 9.8;
+  $("projVVal").textContent = v+" m/s";
+  $("projAVal").textContent = a+"°";
+  const rad = a*Math.PI/180;
+  $("projRange").textContent = (v*v*Math.sin(2*rad)/g).toFixed(1)+" m";
+  $("projHeight").textContent = (Math.pow(v*Math.sin(rad),2)/(2*g)).toFixed(1)+" m";
+  return {v, rad, g};
+}
+function projDraw(ts){
+  const {v, rad, g} = projParams();
+  clear(proj);
+  const ctx = proj.ctx, ox = 50, oy = proj.H-40;
+  ctx.strokeStyle="#334155"; ctx.lineWidth=2;
+  ctx.beginPath(); ctx.moveTo(0,oy); ctx.lineTo(proj.W,oy); ctx.stroke();
+  ctx.fillStyle="#38bdf8";
+  ctx.fillRect(ox-30, oy-14, 30, 14);
+  if(projT!==null){
+    projT += 0.035;
+    const x = v*Math.cos(rad)*projT;
+    const y = v*Math.sin(rad)*projT - 0.5*g*projT*projT;
+    const sx = ox + x*7, sy = oy - Math.max(y,0)*7;
+    if(y >= 0){ projTrail.push([sx,sy]); } else { projT = null; }
+    if(projTrail.length){
+      ctx.strokeStyle="#facc15"; ctx.lineWidth=2; ctx.beginPath();
+      projTrail.forEach((p,i)=> i?ctx.lineTo(p[0],p[1]):ctx.moveTo(p[0],p[1]));
+      ctx.stroke();
+    }
+    if(projT!==null){
+      ctx.fillStyle="#f87171"; ctx.beginPath(); ctx.arc(sx,sy,8,0,Math.PI*2); ctx.fill();
+    }
+  }
+  requestAnimationFrame(projDraw);
+}
+$("projFire").addEventListener("click",()=>{ projT=0; projTrail=[]; });
+$("projReset").addEventListener("click",()=>{ projT=null; projTrail=[]; });
+["projV","projA"].forEach(id=>$(id).addEventListener("input",()=>{ projParams(); projT=null; projTrail=[]; }));
+projParams(); requestAnimationFrame(projDraw);
+
+/* ---------- Free fall ---------- */
+const fall = setupCanvas("fallCanvas");
+const planets = [{n:"الأرض",g:9.8},{n:"القمر",g:1.6},{n:"المريخ",g:3.7}];
+let fT = null, fDone = false;
+function fallParams(){
+  const h = parseFloat($("fallH").value);
+  const p = planets[parseInt($("fallG").value,10)];
+  $("fallHVal").textContent = h+" m";
+  $("fallGVal").textContent = p.n+" "+p.g;
+  $("fallTime").textContent = Math.sqrt(2*h/p.g).toFixed(2)+" s";
+  $("fallSpeed").textContent = Math.sqrt(2*p.g*h).toFixed(1)+" m/s";
+  return {h, g:p.g};
+}
+function fallDraw(){
+  const {h,g} = fallParams();
+  clear(fall);
+  const ctx = fall.ctx, ground = fall.H-35, top = 30;
+  ctx.strokeStyle="#334155"; ctx.lineWidth=2;
+  ctx.beginPath(); ctx.moveTo(0,ground); ctx.lineTo(fall.W,ground); ctx.stroke();
+  ctx.strokeStyle="#94a3b8"; ctx.setLineDash([5,5]);
+  ctx.beginPath(); ctx.moveTo(90,top); ctx.lineTo(fall.W-40,top); ctx.stroke(); ctx.setLineDash([]);
+  let y = top;
+  if(fT!==null){
+    fT += 0.03;
+    const d = 0.5*g*fT*fT;
+    const frac = Math.min(d/h, 1);
+    y = top + frac*(ground-top-16);
+    if(frac>=1){ fDone = true; fT = null; }
+  } else if(fDone){
+    y = ground-16;
+  }
+  ctx.fillStyle="#facc15"; ctx.beginPath(); ctx.arc(fall.W/2, y, 16, 0, Math.PI*2); ctx.fill();
+  ctx.fillStyle="#94a3b8"; ctx.font="16px Tahoma";
+  ctx.fillText(h+" m", 100, top-8);
+  requestAnimationFrame(fallDraw);
+}
+$("fallDrop").addEventListener("click",()=>{ fT=0; fDone=false; });
+$("fallReset").addEventListener("click",()=>{ fT=null; fDone=false; });
+["fallH","fallG"].forEach(id=>$(id).addEventListener("input",()=>{ fallParams(); fT=null; fDone=false; }));
+fallParams(); requestAnimationFrame(fallDraw);
+
+/* ---------- Ohm's law ---------- */
+const ohm = setupCanvas("ohmCanvas");
+let ohmOffset = 0;
+function ohmDraw(){
+  const V = parseFloat($("ohmV").value), R = parseFloat($("ohmR").value);
+  const I = R>0 ? V/R : 0, P = V*I;
+  $("ohmVVal").textContent = V+" V";
+  $("ohmRVal").textContent = R+" Ω";
+  $("ohmI").textContent = I.toFixed(2)+" A";
+  $("ohmP").textContent = P.toFixed(1)+" W";
+  clear(ohm);
+  const ctx = ohm.ctx;
+  const x1=80, x2=ohm.W-80, y1=60, y2=ohm.H-70;
+  ctx.strokeStyle="#f1f5f9"; ctx.lineWidth=3;
+  ctx.strokeRect(x1,y1,x2-x1,y2-y1);
+  /* battery (bottom) */
+  ctx.fillStyle="#0b1220"; ctx.fillRect(ohm.W/2-36,y2-10,72,20);
+  ctx.strokeStyle="#facc15"; ctx.lineWidth=3;
+  ctx.beginPath(); ctx.moveTo(ohm.W/2-16,y2-14); ctx.lineTo(ohm.W/2-16,y2+14);
+  ctx.moveTo(ohm.W/2+10,y2-7); ctx.lineTo(ohm.W/2+10,y2+7); ctx.stroke();
+  ctx.fillStyle="#facc15"; ctx.font="bold 16px Tahoma"; ctx.fillText(V+" V", ohm.W/2-16, y2+38);
+  /* resistor (top) */
+  ctx.fillStyle="#0b1220"; ctx.fillRect(ohm.W/2-60,y1-14,120,28);
+  ctx.strokeStyle="#38bdf8"; ctx.beginPath();
+  let rx = ohm.W/2-55; ctx.moveTo(rx,y1);
+  for(let i=0;i<6;i++){ rx+=9; ctx.lineTo(rx,y1-13); rx+=9; ctx.lineTo(rx,y1+13); }
+  ctx.lineTo(ohm.W/2+55,y1); ctx.stroke();
+  ctx.fillStyle="#38bdf8"; ctx.fillText(R+" Ω", ohm.W/2-20, y1-22);
+  /* ammeter (right side) */
+  ctx.fillStyle="#0b1220"; ctx.beginPath(); ctx.arc(x2,(y1+y2)/2,24,0,Math.PI*2); ctx.fill();
+  ctx.strokeStyle="#4ade80"; ctx.beginPath(); ctx.arc(x2,(y1+y2)/2,24,0,Math.PI*2); ctx.stroke();
+  ctx.fillStyle="#4ade80"; ctx.font="bold 18px Tahoma"; ctx.fillText("A", x2-6,(y1+y2)/2+6);
+  ctx.font="14px Tahoma"; ctx.fillText(I.toFixed(2)+" A", x2-26,(y1+y2)/2+46);
+  /* moving electrons */
+  ohmOffset = (ohmOffset + I*2.2) % 26;
+  ctx.fillStyle="#facc15";
+  const pts=[];
+  for(let x=x1+ohmOffset;x<x2;x+=26) pts.push([x,y1]);
+  for(let y=y1+ohmOffset;y<y2;y+=26) pts.push([x2,y]);
+  for(let x=x2-ohmOffset;x>x1;x-=26) pts.push([x,y2]);
+  for(let y=y2-ohmOffset;y>y1;y-=26) pts.push([x1,y]);
+  pts.forEach(p=>{ ctx.beginPath(); ctx.arc(p[0],p[1],4,0,Math.PI*2); ctx.fill(); });
+  requestAnimationFrame(ohmDraw);
+}
+requestAnimationFrame(ohmDraw);
+
+/* ---------- Quiz ---------- */
+const questions = [
+  {q:"ما هي وحدة قياس القوة؟", o:["الجول","النيوتن","الواط","الأوم"], a:1},
+  {q:"قانون أوم هو:", o:["V = R × I","P = m × g","F = m × a","E = m c²"], a:0},
+  {q:"دور البندول البسيط يزداد عندما:", o:["تنقص كتلته","يزداد طول الخيط","تزداد الجاذبية","يصغر طول الخيط"], a:1},
+  {q:"تسارع الجاذبية الأرضية تقريبًا:", o:["1.6 m/s²","3.7 m/s²","9.8 m/s²","98 m/s²"], a:2},
+  {q:"في السقوط الحر، السرعة بعد زمن t هي:", o:["v = g / t","v = g × t","v = ½ g t²","v ثابتة"], a:1},
+  {q:"يكون مدى القذيفة أعظميًا عند زاوية:", o:["30°","45°","60°","90°"], a:1},
+  {q:"وحدة المقاومة الكهربائية هي:", o:["الأمبير","الفولط","الأوم","الواط"], a:2},
+  {q:"الطاقة الحركية لجسم كتلته m وسرعته v هي:", o:["m v","½ m v²","m v²","m g h"], a:1}
+];
+function renderQuiz(){
+  $("quizBox").innerHTML = questions.map((item,i)=>`
+    <fieldset class="quiz-q">
+      <legend>${i+1}. ${item.q}</legend>
+      ${item.o.map((opt,j)=>`<label><input type="radio" name="q${i}" value="${j}"> ${opt}</label>`).join("")}
+      <div id="fb${i}"></div>
+    </fieldset>`).join("");
+  $("score").textContent = "";
+}
+$("checkQuiz").addEventListener("click",()=>{
+  let score = 0;
+  questions.forEach((item,i)=>{
+    const sel = document.querySelector(`input[name="q${i}"]:checked`);
+    const fb = $("fb"+i);
+    if(sel && parseInt(sel.value,10)===item.a){ score++; fb.innerHTML='<span class="correct">✔ إجابة صحيحة</span>'; }
+    else{ fb.innerHTML=`<span class="wrong">✘ الإجابة الصحيحة: ${item.o[item.a]}</span>`; }
+  });
+  $("score").textContent = `نتيجتك: ${score} / ${questions.length}`;
+});
+$("resetQuiz").addEventListener("click",renderQuiz);
+renderQuiz();
+</script>
+</body>
+</html>
